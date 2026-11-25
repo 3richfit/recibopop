@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReciboPop</title>
+<meta name="theme-color" content="#0A4DFF">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+:root{--azul:#0A4DFF;--azul2:#1E86FF;--verde:#00C853;--amarelo:#FFD21F;--vermelho:#D50000;--fundo:#EEF3FF;--texto:#0F1B3D;--borda:#C9D8FF}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:17px;background:var(--fundo);color:var(--texto);padding-bottom:84px}
+header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:16px 18px;display:flex;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 3px 10px rgba(10,77,255,.35)}
+.logo{flex:1;font-size:34px;font-weight:900;letter-spacing:-1px;line-height:1}
+.logo b{color:var(--amarelo)}
+.badge{background:var(--amarelo);color:var(--texto);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px}
+main{max-width:560px;margin:0 auto;padding:16px}
+section[hidden]{display:none}
+h2{font-size:22px;font-weight:900;margin:6px 0 12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.stat{border-radius:18px;padding:16px;color:#fff}
+.stat.rec{background:var(--verde)}.stat.pen{background:var(--azul)}
+.stat .l{font-size:15px;font-weight:700;opacity:.95}
+.stat .v{font-size:26px;font-weight:900;margin-top:4px}
+.card{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:16px}
+label{display:block;font-size:16px;font-weight:800;margin:14px 0 6px}
+input,textarea{width:100%;padding:14px;border:2px solid var(--borda);border-radius:14px;font-size:19px;font-weight:700;background:#fff;color:var(--texto);font-family:inherit}
+input::placeholder,textarea::placeholder{font-weight:500;color:#8a97bd}
+textarea{min-height:90px;resize:vertical}
+input:focus,textarea:focus{outline:3px solid var(--azul);border-color:var(--azul)}
+.saldo-prev{margin-top:16px;padding:14px;background:#E6FFF0;border:2px solid var(--verde);border-radius:14px;font-size:18px;font-weight:800}
+.saldo-prev strong{color:#008F3A;font-size:22px}
+.btn{display:block;width:100%;padding:16px;border-radius:14px;border:none;font-size:18px;font-weight:900;cursor:pointer;text-align:center;text-decoration:none;margin-top:12px}
+.btn.verde{background:var(--verde);color:#fff}
+.btn.azul{background:var(--azul);color:#fff}
+.btn.zap{background:#fff;color:#0B8F3F;border:3px solid #25D366}
+.btn.vaz{background:#fff;color:var(--vermelho);border:3px solid var(--vermelho)}
+.btn.cont{background:#fff;color:var(--azul);border:3px solid var(--azul)}
+.btn:disabled{opacity:.5}
+.btn-peq{width:auto;display:inline-block;padding:10px 16px;font-size:15px;margin:0}
+.msg{padding:14px;border-radius:12px;font-size:16px;font-weight:800;margin-top:12px}
+.msg.erro{background:#FFE1E1;color:#A30000}.msg.ok{background:#D6FFE5;color:#00692B}
+.item{display:block;text-decoration:none;color:inherit;background:#fff;border:2px solid var(--borda);border-left:8px solid var(--azul);border-radius:16px;padding:14px;margin-bottom:12px}
+.item.quit{border-left-color:var(--verde)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.item .num{font-weight:900;color:var(--azul);font-size:16px}
+.item .nome{font-size:20px;font-weight:900;margin-top:4px}
+.item .desc{font-size:15px;color:#4a5878;margin-top:2px}
+.tag{font-size:14px;font-weight:900;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.tag.q{background:#D6FFE5;color:#00692B}.tag.a{background:#FFF1B8;color:#7a5600}
+.vazio{text-align:center;padding:26px 10px;font-weight:700;color:#4a5878}
+.voltar{display:inline-block;color:var(--azul);font-weight:900;text-decoration:none;font-size:18px;margin-bottom:10px}
+.d-num{font-size:18px;font-weight:900;color:var(--azul)}
+.d-nome{font-size:28px;font-weight:900;margin:4px 0}
+.d-desc{font-size:18px;font-weight:600;color:#33415f}
+table{width:100%;border-collapse:collapse;margin-top:14px}
+td{padding:11px 4px;border-bottom:2px solid #E3EBFF;font-size:18px;font-weight:700}
+td:last-child{text-align:right;font-weight:900}
+tr.sf td{font-size:22px;color:var(--azul);border-bottom:none}
+.logo-area{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.logo-area img{width:64px;height:64px;object-fit:contain;border-radius:12px;border:2px solid var(--borda)}
+.dica{font-size:15px;font-weight:600;color:#4a5878;margin-top:6px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:3px solid var(--azul);display:flex;z-index:10}
+nav a{flex:1;text-align:center;text-decoration:none;color:#5b6b95;font-weight:800;font-size:13px;padding:8px 0 10px}
+nav a span{display:block;font-size:24px;line-height:1.1}
+nav a.on{color:#fff;background:var(--azul)}
+#print-area{display:none}
+@media print{
+body>*:not(#print-area){display:none!important}
+body{background:#fff!important;padding:0!important}
+#print-area{display:block!important;padding:32px}
+.pdf{font-family:system-ui,sans-serif;max-width:640px;margin:0 auto;color:#111}
+.pdf .topo{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:4px solid #0A4DFF;padding-bottom:16px;margin-bottom:20px}
+.pdf .topo img{max-height:90px;max-width:220px;object-fit:contain}
+.pdf h1{color:#0A4DFF;font-size:28px}
+.pdf .n{font-family:monospace;color:#555}
+.pdf .b{margin:16px 0}.pdf .r{font-size:12px;color:#777}.pdf .v{font-size:18px;font-weight:800}
+.pdf table{width:100%;border-collapse:collapse}
+.pdf td{padding:8px;border-bottom:1px solid #ddd;font-size:15px}
+.pdf tr.sf td{font-weight:900;color:#0A4DFF;font-size:18px;border-top:2px solid #0A4DFF}
+.pdf .aviso{margin-top:14px;font-size:12px;font-weight:700;color:#444;border:1px solid #bbb;padding:8px;text-align:center}
+.pdf .rod{margin-top:36px;font-size:12px;color:#888;text-align:center}
+.pdf .aviso{margin-top:14px;font-size:11px;color:#555;border-top:1px solid #ddd;padding-top:10px}
+}
+
+/* ---- rodapé v5: ícones desenhados em quadros arredondados ---- */
+nav{padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px rgba(10,77,255,.12)}
+nav a{padding:0 0 2px;color:#3D4C7A;font-weight:800;font-size:13px;-webkit-tap-highlight-color:transparent}
+nav a .ic{display:flex;align-items:center;justify-content:center;width:52px;height:40px;margin:0 auto 4px;border-radius:14px;background:#E3EBFF;color:var(--azul);transition:background .25s,transform .15s}
+nav a .ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+nav a:active .ic{transform:scale(.92)}
+nav a.on{color:var(--azul);background:none}
+nav a.on .ic{background:var(--azul);color:#fff;box-shadow:0 4px 0 #0736B8}
+nav a.on .ic svg{animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){nav a.on .ic svg{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div style="flex:1;min-width:0"><img src="logo-recibopop.png" alt="ReciboPop - Emita • Controle • Compartilhe" style="height:64px;max-width:100%;object-fit:contain;background:#fff;border-radius:12px;padding:4px"></div>
+  <img id="cab-logo" alt="" style="display:none;height:52px;max-width:110px;object-fit:contain;background:#fff;border-radius:12px;padding:4px;margin-right:8px">
+  <span class="badge">V3.2</span>
+</header>
+<main>
+<section id="t-inicio">
+  <div class="stats">
+    <div class="stat rec"><div class="l">Total recebido</div><div class="v" id="rec">R$ 0,00</div></div>
+    <div class="stat pen"><div class="l">A receber</div><div class="v" id="pen">R$ 0,00</div></div>
+  </div>
+  <a class="btn verde" href="#novo" id="btn-novo-ini">+ Novo recibo</a>
+  <h2 style="margin-top:22px">Últimos recibos</h2>
+  <div id="ultimos"></div>
+</section>
+
+<section id="t-novo">
+  <h2>Novo recibo</h2>
+  <div id="novo-logo-box" class="card" style="display:none;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+    <img id="novo-logo" alt="Seu logotipo" style="width:64px;height:64px;object-fit:contain;border-radius:12px;border:2px solid #C9D8FF;background:#fff">
+    <div style="font-size:16px;font-weight:800">Seu logotipo aparece no PDF.</div>
+  </div>
+  <div id="novo-sem-logo" class="dica" style="display:none;margin:0 0 12px">Nenhum logotipo salvo. Para incluir o seu, vá em <b>Mais</b>.</div>
+  <form id="form" class="card">
+    <label for="cli">Nome do cliente</label>
+    <input id="cli" placeholder="Nome completo" required>
+    <label for="desc">Descrição do serviço</label>
+    <textarea id="desc" placeholder="O que foi realizado?" required></textarea>
+    <label for="tot">Valor total (R$)</label>
+    <input id="tot" inputmode="numeric" placeholder="0,00" autocomplete="off" required>
+    <label for="ent">Entrada (R$)</label>
+    <input id="ent" inputmode="numeric" placeholder="0,00" autocomplete="off">
+    <div class="saldo-prev">Saldo restante: <strong id="prev">R$ 0,00</strong></div>
+    <button class="btn verde" type="submit" id="btn-criar">Criar recibo</button>
+    <div id="msg"></div>
+  </form>
+</section>
+
+<section id="t-historico">
+  <h2>Histórico</h2>
+  <div id="lista"></div>
+</section>
+
+<section id="t-recibo">
+  <a class="voltar" href="#historico">‹ Voltar</a>
+  <div id="detalhe"></div>
+</section>
+
+<section id="t-mais">
+  <h2>Mais</h2>
+  <div class="card">
+    <h2 style="font-size:19px">Seu logotipo</h2>
+    <div class="logo-area"><img id="logo-img" alt="Logotipo" style="display:none"><div style="flex:1"><input type="file" id="logo-in" accept="image/*"></div></div>
+    <div class="dica">Aparece no PDF do recibo. Até 3 MB.</div>
+    <button class="btn vaz btn-peq" id="logo-rm" type="button" style="display:none;margin-top:10px">Remover logotipo</button>
+  </div>
+  <div class="card">
+    <h2 style="font-size:19px">Backup dos dados</h2>
+    <div class="dica">Salve seus recibos em um arquivo para não perder nada.</div>
+    <button class="btn azul" id="exp" type="button">Exportar backup</button>
+    <label class="btn cont" style="margin-top:12px">Importar backup<input type="file" id="imp" accept=".json,application/json" style="display:none"></label>
+  </div>
+</section>
+</main>
+
+<nav id="nav">
+  <a href="#inicio" data-t="inicio"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h4.5v-6h5v6H19V9.5"/></svg></span>Início</a>
+  <a href="#novo" data-t="novo"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>Novo</a>
+  <a href="#historico" data-t="historico"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2.5-1.6L13 21l-2.5-1.6L8 21l-2-1.4z"/><path d="M9 8.5h6M9 12h6M9 15.5h4"/></svg></span>Histórico</a>
+  <a href="#mais" data-t="mais"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>Mais</a>
+</nav>
+<div id="print-area"></div>
+
+<script>
+(function(){
+"use strict";
+var K_REC="recibopop_recibos",K_CONT="recibopop_contador",K_NUM="recibopop_ultimo_numero",K_LOGO="recibopop_logo",LIMITE=5;
+var avisoDetalhe="";
+function $(i){return document.getElementById(i)}
+
+/* dinheiro */
+function limpar(v){if(typeof v==="number")return v;if(!v)return 0;var s=String(v).replace(/[^\d,.\-]/g,"");if(s.indexOf(",")!==-1)s=s.replace(/\./g,"").replace(",",".");var n=Number(s);return isFinite(n)?n:0}
+function cent(v){return Math.round(limpar(v)*100)}
+function reais(c){return c/100}
+function fmt(v){return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function fmtN(v){return Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function data(i){try{return new Date(i).toLocaleDateString("pt-BR")}catch(e){return ""}}
+function esc(s){if(s==null)return "";return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function mascara(inp){inp.addEventListener("input",function(){var d=inp.value.replace(/\D/g,"").slice(0,12),c=parseInt(d||"0",10);inp.dataset.c=String(c);inp.value=c>0?fmtN(c/100):"";previa()})}
+function cd(inp){return parseInt(inp.dataset.c||"0",10)}
+function previa(){$("prev").textContent=fmt(reais(Math.max(0,cd($("tot"))-cd($("ent")))))}
+
+/* armazenamento */
+function ler(){try{var l=JSON.parse(localStorage.getItem(K_REC)||"[]");return Array.isArray(l)?l:[]}catch(e){return[]}}
+function gravar(l){localStorage.setItem(K_REC,JSON.stringify(l))}
+function mes(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}
+function contador(){try{return JSON.parse(localStorage.getItem(K_CONT)||"{}")||{}}catch(e){return{}}}
+function usados(){return contador()[mes()]||0}
+function marcar(){var c=contador();c[mes()]=usados()+1;localStorage.setItem(K_CONT,JSON.stringify(c))}
+function proxNum(){var n=Number(localStorage.getItem(K_NUM)||0)+1;localStorage.setItem(K_NUM,String(n));return "RP-"+String(n).padStart(6,"0")}
+function achar(n){return ler().filter(function(x){return x.numero===n})[0]}
+function logo(){try{return localStorage.getItem(K_LOGO)}catch(e){return null}}
+
+/* regras */
+function criar(tot,ent,cli,desc){
+  var t=cent(tot),e=cent(ent);
+  if(usados()>=LIMITE)throw new Error("Limite de "+LIMITE+" recibos no mês atingido.");
+  if(!cli)throw new Error("Informe o nome do cliente.");
+  if(!desc)throw new Error("Informe a descrição do serviço.");
+  if(t<=0)throw new Error("O valor total deve ser maior que zero.");
+  if(e>t)throw new Error("A entrada é maior que o valor total.");
+  var agora=new Date().toISOString();
+  var r={numero:proxNum(),mesCriacao:mes(),criadoEm:agora,dados:{cliente:cli,descricao:desc},
+    pagamento:{total:reais(t),pago:reais(e),saldo:reais(t-e),quitado:e===t,pagamentos:e>0?[{valor:reais(e),data:agora}]:[]}};
+  var l=ler();l.push(r);gravar(l);marcar();return r;
+}
+function pagar(num,valor){
+  var v=cent(valor);if(v<=0)throw new Error("O valor deve ser maior que zero.");
+  var l=ler(),r=l.filter(function(x){return x.numero===num})[0];
+  if(!r)throw new Error("Recibo não encontrado.");
+  var novo=cent(r.pagamento.pago)+v,t=cent(r.pagamento.total);
+  if(novo>t)throw new Error("O pagamento é maior que o saldo restante.");
+  r.pagamento.pagamentos.push({valor:reais(v),data:new Date().toISOString()});
+  r.pagamento.pago=reais(novo);r.pagamento.saldo=reais(t-novo);r.pagamento.quitado=novo===t;gravar(l);
+}
+
+/* telas */
+function item(r){
+  var q=r.pagamento.quitado;
+  return '<a class="item'+(q?' quit':'')+'" href="#recibo-'+encodeURIComponent(r.numero)+'">'+
+  '<div class="top"><span class="num">'+esc(r.numero)+'</span><span class="tag '+(q?'q':'a')+'">'+(q?'Quitado':fmt(r.pagamento.saldo)+' a receber')+'</span></div>'+
+  '<div class="nome">'+esc(r.dados.cliente)+'</div>'+
+  '<div class="desc">'+esc(r.dados.descricao)+' — Total '+fmt(r.pagamento.total)+'</div></a>';
+}
+function listaHTML(l,vazio){return l.length?l.map(item).join(""):'<div class="vazio">'+vazio+'</div>'}
+
+function desenhar(){
+  (function(){var l=logo(),c=$("cab-logo");if(!c)return;c.style.display=l?"block":"none";if(l)c.src=l;})();
+  var rec=0,pen=0,todos=ler();
+  todos.forEach(function(r){rec+=cent(r.pagamento.pago);pen+=cent(r.pagamento.saldo)});
+  $("rec").textContent=fmt(reais(rec));$("pen").textContent=fmt(reais(pen));
+  var inv=todos.slice().reverse();
+  $("ultimos").innerHTML=listaHTML(inv.slice(0,3),"Nenhum recibo ainda. Toque em Novo recibo para começar.");
+  $("lista").innerHTML=listaHTML(inv,"Nenhum recibo ainda.");
+  var resta=LIMITE-usados();
+  $("btn-criar").disabled=resta<=0;
+  $("btn-criar").textContent=resta>0?"Criar recibo ("+resta+" restantes)":"Limite mensal atingido";
+  var lg=logo();$("logo-img").style.display=lg?"block":"none";$("logo-rm").style.display=lg?"inline-block":"none";if(lg)$("logo-img").src=lg;
+  $("novo-logo-box").style.display=lg?"flex":"none";$("novo-sem-logo").style.display=lg?"none":"block";if(lg)$("novo-logo").src=lg;
+}
+
+function detalhe(num){
+  var r=achar(num);
+  if(!r){location.hash="#historico";return}
+  var p=r.pagamento;
+  var linhas=p.pagamentos.map(function(x){return "<tr><td>Pago em "+esc(data(x.data))+"</td><td>"+esc(fmt(x.valor))+"</td></tr>"}).join("");
+  $("detalhe").innerHTML=
+  (avisoDetalhe?'<div class="msg ok" style="margin:0 0 14px">'+esc(avisoDetalhe)+'</div>':"")+
+  '<div class="card">'+(logo()?'<img src="'+esc(logo())+'" alt="" style="max-height:56px;margin-bottom:10px">':'')+'<div class="d-num">'+esc(r.numero)+' • '+esc(data(r.criadoEm))+'</div>'+
+  '<div class="d-nome">'+esc(r.dados.cliente)+'</div><div class="d-desc">'+esc(r.dados.descricao)+'</div>'+
+  '<table>'+linhas+'<tr><td>Valor total</td><td>'+esc(fmt(p.total))+'</td></tr><tr><td>Total pago</td><td>'+esc(fmt(p.pago))+'</td></tr>'+
+  '<tr class="sf"><td>'+(p.quitado?"Quitado":"Saldo a receber")+'</td><td>'+esc(fmt(p.saldo))+'</td></tr></table></div>'+
+  '<p class="dica" style="margin:4px 2px 12px">Recibo particular. Não substitui cupom fiscal ou nota fiscal.</p>'+'<button class="btn verde" data-a="pg" data-n="'+esc(r.numero)+'"'+(p.quitado?" disabled":"")+'>+ Registrar pagamento</button>'+
+  '<button class="btn azul" data-a="pdf" data-n="'+esc(r.numero)+'">Gerar PDF</button>'+
+  '<button class="btn zap" data-a="zap" data-n="'+esc(r.numero)+'">Enviar por WhatsApp</button>'+
+  '<button class="btn vaz" data-a="del" data-n="'+esc(r.numero)+'">Apagar recibo</button>';
+  avisoDetalhe="";
+}
+
+function rota(){
+  var h=decodeURIComponent((location.hash||"#inicio").slice(1)),tela=h;
+  if(h.indexOf("recibo-")===0){tela="recibo";detalhe(h.slice(7))}
+  else if(["inicio","novo","historico","mais"].indexOf(h)===-1)tela="inicio";
+  Array.prototype.forEach.call(document.querySelectorAll("section"),function(s){s.hidden=s.id!=="t-"+tela});
+  Array.prototype.forEach.call(document.querySelectorAll("#nav a"),function(a){a.classList.toggle("on",a.dataset.t===(tela==="recibo"?"historico":tela))});
+  desenhar();window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",rota);
+
+/* formulário */
+mascara($("tot"));mascara($("ent"));
+$("form").addEventListener("submit",function(e){
+  e.preventDefault();
+  try{
+    var r=criar(reais(cd($("tot"))),reais(cd($("ent"))),$("cli").value.trim(),$("desc").value.trim());
+    e.target.reset();$("tot").dataset.c="0";$("ent").dataset.c="0";previa();$("msg").innerHTML="";
+    avisoDetalhe="Recibo criado com sucesso!";
+    location.hash="#recibo-"+encodeURIComponent(r.numero);
+  }catch(err){$("msg").className="msg erro";$("msg").textContent=err.message}
+});
+
+/* ações */
+function pdf(r){
+  var lg=logo()||"logo-recibopop.png",p=r.pagamento;
+  var ls=p.pagamentos.map(function(x){return "<tr><td>Pagamento em "+esc(data(x.data))+"</td><td style='text-align:right'>"+esc(fmt(x.valor))+"</td></tr>"}).join("");
+  $("print-area").innerHTML='<div class="pdf"><div class="topo"><div><h1>Recibo</h1><div class="n">'+esc(r.numero)+'</div></div>'+(lg?'<img src="'+esc(lg)+'" alt="">':"")+'</div>'+
+  '<div class="b"><div class="r">Recebemos de</div><div class="v">'+esc(r.dados.cliente)+'</div></div>'+
+  '<div class="b"><div class="r">Referente a</div><div class="v">'+esc(r.dados.descricao)+'</div></div>'+
+  '<table>'+ls+'<tr><td>Valor total</td><td style="text-align:right">'+esc(fmt(p.total))+'</td></tr><tr><td>Total pago</td><td style="text-align:right">'+esc(fmt(p.pago))+'</td></tr>'+
+  '<tr class="sf"><td>Saldo pendente</td><td style="text-align:right">'+esc(fmt(p.saldo))+'</td></tr></table><div class="rod">Emitido em '+esc(data(r.criadoEm))+' • ReciboPop</div><div class="aviso">Este documento é um recibo particular de pagamento. Não é cupom fiscal, nota fiscal nem documento fiscal eletrônico, e não substitui esses documentos.</div></div>';
+  var im=$("print-area").querySelector("img");
+  if(im&&!im.complete){im.onload=im.onerror=function(){window.print()};}
+  else{window.print();}
+}
+function zap(r){
+  var p=r.pagamento,t="Recibo "+r.numero+"\nCliente: "+r.dados.cliente+"\nServiço: "+r.dados.descricao+"\nTotal: "+fmt(p.total)+"\nPago: "+fmt(p.pago)+"\n"+(p.quitado?"Situação: quitado":"Saldo pendente: "+fmt(p.saldo));
+  window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
+}
+$("detalhe").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-a]");if(!b)return;
+  var n=b.getAttribute("data-n"),a=b.getAttribute("data-a"),r=achar(n);
+  try{
+    if(a==="pg"){var v=prompt("Qual o valor recebido? (ex: 150,00)");if(v===null)return;pagar(n,v);avisoDetalhe="Pagamento registrado.";rota()}
+    else if(a==="pdf"&&r)pdf(r);
+    else if(a==="zap"&&r)zap(r);
+    else if(a==="del"&&confirm("Apagar o recibo "+n+"? Isso não pode ser desfeito.")){gravar(ler().filter(function(x){return x.numero!==n}));location.hash="#historico"}
+  }catch(err){alert(err.message)}
+});
+
+/* logotipo */
+$("logo-in").addEventListener("change",async function(e){
+  var f=e.target.files[0];if(!f)return;
+  try{
+    if(f.size>3*1024*1024)throw new Error("O logotipo tem mais de 3 MB.");
+    var im=await createImageBitmap(f),es=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement("canvas");
+    c.width=Math.max(1,Math.round(im.width*es));c.height=Math.max(1,Math.round(im.height*es));
+    var x=c.getContext("2d");x.fillStyle="#FFFFFF";x.fillRect(0,0,c.width,c.height);
+    x.drawImage(im,0,0,c.width,c.height);
+    try{localStorage.setItem(K_LOGO,c.toDataURL("image/jpeg",0.85));}
+    catch(q){throw new Error("o celular não tem espaço para guardar esta imagem.")}
+    desenhar();
+  }catch(err){alert("Não foi possível usar essa imagem. "+err.message)}
+});
+$("logo-rm").addEventListener("click",function(){localStorage.removeItem(K_LOGO);$("logo-in").value="";desenhar()});
+
+/* backup */
+$("exp").addEventListener("click",function(){
+  var d=JSON.stringify({versao:1,recibos:ler(),contador:contador(),numero:localStorage.getItem(K_NUM),logo:logo()});
+  var u=URL.createObjectURL(new Blob([d],{type:"application/json"})),a=document.createElement("a");
+  a.href=u;a.download="recibopop-backup-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+});
+$("imp").addEventListener("change",function(e){
+  var f=e.target.files[0];if(!f)return;var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var d=JSON.parse(rd.result);
+      if(!d||!Array.isArray(d.recibos))throw new Error("arquivo de backup inválido.");
+      d.recibos.forEach(function(r){if(!r||typeof r.numero!=="string"||!r.dados||!r.pagamento||!Array.isArray(r.pagamento.pagamentos))throw new Error("há recibos com formato inválido.")});
+      if(!confirm("Restaurar o backup substitui os recibos atuais. Continuar?"))return;
+      gravar(d.recibos);
+      if(d.contador&&typeof d.contador==="object")localStorage.setItem(K_CONT,JSON.stringify(d.contador));
+      if(d.numero)localStorage.setItem(K_NUM,String(d.numero));
+      if(typeof d.logo==="string"&&d.logo.indexOf("data:image/")===0)localStorage.setItem(K_LOGO,d.logo);
+      desenhar();alert("Backup restaurado.");
+    }catch(err){alert("Não foi possível restaurar: "+err.message+" Seus dados atuais não foram alterados.")}
+  };
+  rd.readAsText(f);e.target.value="";
+});
+
+previa();rota();
+})();
+</script>
+<script>
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}
+</script>
+</body>
+</html>
