@@ -82,7 +82,9 @@ body{background:#fff!important;padding:0!important}
 .pdf table{width:100%;border-collapse:collapse}
 .pdf td{padding:8px;border-bottom:1px solid #ddd;font-size:15px}
 .pdf tr.sf td{font-weight:900;color:#0A4DFF;font-size:18px;border-top:2px solid #0A4DFF}
+.pdf .aviso{margin-top:14px;font-size:12px;font-weight:700;color:#444;border:1px solid #bbb;padding:8px;text-align:center}
 .pdf .rod{margin-top:36px;font-size:12px;color:#888;text-align:center}
+.pdf .aviso{margin-top:14px;font-size:11px;color:#555;border-top:1px solid #ddd;padding-top:10px}
 }
 
 /* ---- rodapé v5: ícones desenhados em quadros arredondados ---- */
@@ -250,7 +252,7 @@ function detalhe(num){
   '<div class="d-nome">'+esc(r.dados.cliente)+'</div><div class="d-desc">'+esc(r.dados.descricao)+'</div>'+
   '<table>'+linhas+'<tr><td>Valor total</td><td>'+esc(fmt(p.total))+'</td></tr><tr><td>Total pago</td><td>'+esc(fmt(p.pago))+'</td></tr>'+
   '<tr class="sf"><td>'+(p.quitado?"Quitado":"Saldo a receber")+'</td><td>'+esc(fmt(p.saldo))+'</td></tr></table></div>'+
-  '<button class="btn verde" data-a="pg" data-n="'+esc(r.numero)+'"'+(p.quitado?" disabled":"")+'>+ Registrar pagamento</button>'+
+  '<p class="dica" style="margin:4px 2px 12px">Recibo particular. Não substitui cupom fiscal ou nota fiscal.</p>'+'<button class="btn verde" data-a="pg" data-n="'+esc(r.numero)+'"'+(p.quitado?" disabled":"")+'>+ Registrar pagamento</button>'+
   '<button class="btn azul" data-a="pdf" data-n="'+esc(r.numero)+'">Gerar PDF</button>'+
   '<button class="btn zap" data-a="zap" data-n="'+esc(r.numero)+'">Enviar por WhatsApp</button>'+
   '<button class="btn vaz" data-a="del" data-n="'+esc(r.numero)+'">Apagar recibo</button>';
@@ -287,7 +289,7 @@ function pdf(r){
   '<div class="b"><div class="r">Recebemos de</div><div class="v">'+esc(r.dados.cliente)+'</div></div>'+
   '<div class="b"><div class="r">Referente a</div><div class="v">'+esc(r.dados.descricao)+'</div></div>'+
   '<table>'+ls+'<tr><td>Valor total</td><td style="text-align:right">'+esc(fmt(p.total))+'</td></tr><tr><td>Total pago</td><td style="text-align:right">'+esc(fmt(p.pago))+'</td></tr>'+
-  '<tr class="sf"><td>Saldo pendente</td><td style="text-align:right">'+esc(fmt(p.saldo))+'</td></tr></table><div class="rod">Emitido em '+esc(data(r.criadoEm))+' • ReciboPop</div></div>';
+  '<tr class="sf"><td>Saldo pendente</td><td style="text-align:right">'+esc(fmt(p.saldo))+'</td></tr></table><div class="rod">Emitido em '+esc(data(r.criadoEm))+' • ReciboPop</div><div class="aviso">Este documento é um recibo particular de pagamento. Não é cupom fiscal, nota fiscal nem documento fiscal eletrônico, e não substitui esses documentos.</div></div>';
   var im=$("print-area").querySelector("img");
   if(im&&!im.complete){im.onload=im.onerror=function(){window.print()};}
   else{window.print();}
